@@ -34,13 +34,13 @@ import {
   MdExpandLess,
   MdHome,
   MdHealthAndSafety,
-  MdVideoLibrary // Ícone para vídeos
+  MdVideoLibrary 
 } from 'react-icons/md';
 import { FaFileMedicalAlt } from "react-icons/fa";
 
 interface SidebarProps {
   onSelectManual: (fileUrl: string | null) => void;
-  onSelectVideo?: (videoUrl: string, title: string) => void; // Nova prop para vídeos
+  onSelectVideo?: (videoUrl: string, title: string) => void; 
 }
 
 interface MenuItemBase {

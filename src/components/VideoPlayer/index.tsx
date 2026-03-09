@@ -4,10 +4,9 @@ import styles from './styles.module.scss';
 
 interface VideoPlayerProps {
   videoUrl: string;
-  onClose: () => void;
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, onClose }) => {
+export const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);

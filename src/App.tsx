@@ -56,8 +56,6 @@ const Layout = () => {
             <>
               <VideoPlayer
                 videoUrl={selectedVideo.url}
-                title={selectedVideo.title}
-                onClose={handleClose}
               />
             </>
           )}
