@@ -32,11 +32,6 @@ const Layout = () => {
     setSelectedManual(null);
   };
 
-  const handleClose = () => {
-    setSelectedManual(null);
-    setSelectedVideo(null);
-  };
-
   return (
     <div className={styles.appContainer}>
       <Sidebar 
