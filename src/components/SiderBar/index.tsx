@@ -17,6 +17,10 @@ import preparos1 from '../../assets/Files/preparos/ECOS PREPAROS.pdf'
 import preparos2 from '../../assets/Files/preparos/PREPARO EEG.pdf'
 import preparos3 from '../../assets/Files/preparos/especialidades.pdf'
 
+
+import videoteste from '../../assets/videos/2025-11-06 13-32-14.mkv'
+
+
 import {
   MdLocalHospital,
   MdWork,
@@ -29,12 +33,14 @@ import {
   MdExpandMore,
   MdExpandLess,
   MdHome,
-  MdHealthAndSafety
+  MdHealthAndSafety,
+  MdVideoLibrary // Ícone para vídeos
 } from 'react-icons/md';
 import { FaFileMedicalAlt } from "react-icons/fa";
 
 interface SidebarProps {
   onSelectManual: (fileUrl: string | null) => void;
+  onSelectVideo?: (videoUrl: string, title: string) => void; // Nova prop para vídeos
 }
 
 interface MenuItemBase {
@@ -69,6 +75,13 @@ interface ManualChild {
   action?: () => void;
 }
 
+interface VideoChild {
+  label: string;
+  url: string;
+  action: () => void;
+  duration?: string;
+}
+
 interface ManualGroup {
   label: string;
   icon: React.ReactElement;
@@ -78,7 +91,16 @@ interface ManualGroup {
   children: ManualChild[];
 }
 
-export const Sidebar = ({ onSelectManual }: SidebarProps) => {
+interface VideoGroup {
+  label: string;
+  icon: React.ReactElement;
+  expandable: boolean;
+  expanded: boolean;
+  toggle: () => void;
+  children: VideoChild[];
+}
+
+export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
   const location = useLocation();
   const isRecRoute = location.pathname === '/rec';
   const isExpanded = true
@@ -87,11 +109,19 @@ export const Sidebar = ({ onSelectManual }: SidebarProps) => {
   const [openLaudos, setOpenLaudos] = useState(false);
   const [openManuaisGeral, setOpenManuaisGeral] = useState(false);
   const [openManuaisMedicos, setOpenManuaisMedicos] = useState(false);
-const [openPreparos, setOpenPreparos] = useState(false);
+  const [openPreparos, setOpenPreparos] = useState(false);
+  const [openVideosTutoriais, setOpenVideosTutoriais] = useState(false); // Novo state para vídeos
 
   const handleItemClick = (file: string | null, label: string) => {
     setActiveItem(label);
     onSelectManual(file);
+  };
+
+  const handleVideoClick = (videoUrl: string, title: string) => {
+    setActiveItem(title);
+    if (onSelectVideo) {
+      onSelectVideo(videoUrl, title);
+    }
   };
 
   const handleNavigation = (link: string, external = false, label: string) => {
@@ -303,9 +333,7 @@ const [openPreparos, setOpenPreparos] = useState(false);
           action: () => handleNavigation('https://icrx.onrad.com.br/', true, 'Raio X'),
         },
       ],
-      
     },
-     
   ];
 
   const manualsRecGeral: ManualGroup = {
@@ -327,7 +355,6 @@ const [openPreparos, setOpenPreparos] = useState(false);
         label: 'Raio X', 
         file: manualRec1,
       },
-      
     ],
   };
 
@@ -353,11 +380,28 @@ const [openPreparos, setOpenPreparos] = useState(false);
     ],
   };
 
+  const videosTutoriais: VideoGroup = {
+    label: 'Vídeos Tutoriais',
+    icon: getIconWithColor(<MdVideoLibrary />, 'accent'),
+    expandable: true,
+    expanded: openVideosTutoriais,
+    toggle: () => setOpenVideosTutoriais((prev) => !prev),
+    children: [
+      {
+        label: 'Video de teste',
+        url: videoteste,
+        action: () => handleVideoClick(videoteste, 'Video de teste'),
+        duration: 'n/a'
+      },
+     
+    ],
+  };
+
   const manualsDefault = {
     label: 'Manuais',
     icon: getIconWithColor(<MdMenuBook />, 'primary'),
     children: [
-       {
+      {
         label: 'Totem e Chamador de Senhas',
         file: manualChamador,
       },
@@ -369,12 +413,10 @@ const [openPreparos, setOpenPreparos] = useState(false);
         label: 'Atendimento PCMSO', 
         file: manualParaAtendimentoPCMSO,
       },
-    
       { 
         label: 'Emissão de Notas | Mais de um pagamento', 
         file: manualRec5,
       },
-
     ],
   };
 
@@ -506,6 +548,45 @@ const [openPreparos, setOpenPreparos] = useState(false);
           </ul>
         </div>
 
+        {/* NOVA SEÇÃO: Vídeos Tutoriais */}
+        <div className={styles.section}>
+          {isExpanded && <p className={styles.sectionTitle}>Treinamentos</p>}
+          <ul className={styles.menu}>
+            <li className={styles.menuItem}>
+              <div className={styles.menuItemContent} onClick={videosTutoriais.toggle}>
+                {videosTutoriais.icon}
+                {isExpanded && (
+                  <>
+                    <span>{videosTutoriais.label}</span>
+                    {videosTutoriais.expanded ? <MdExpandLess /> : <MdExpandMore />}
+                  </>
+                )}
+              </div>
+              {videosTutoriais.expanded && (
+                <ul className={styles.submenu}>
+                  {videosTutoriais.children.map((video, videoIndex) => (
+                    <li
+                      key={video.label}
+                      className={`${styles.submenuItem} ${activeItem === video.label ? styles.active : ''}`}
+                      onClick={() => video.action()}
+                      style={{ animationDelay: `${videoIndex * 0.03}s` }}
+                    >
+                      {isExpanded && (
+                        <div className={styles.videoMenuItem}>
+                          <span>▶️ {video.label}</span>
+                          {video.duration && (
+                            <span className={styles.videoDuration}>{video.duration}</span>
+                          )}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          </ul>
+        </div>
+
         <div className={styles.section}>
           {isExpanded && <p className={styles.sectionTitle}>Documentação</p>}
           <ul className={styles.menu}>
@@ -531,7 +612,7 @@ const [openPreparos, setOpenPreparos] = useState(false);
                         {manualGroup.children.map((manual, manualIndex) => (
                           <li
                             key={manual.label}
-                            className={styles.submenuItem}
+                            className={`${styles.submenuItem} ${activeItem === manual.label ? styles.active : ''}`}
                             onClick={() => {
                               if (manual.action) {
                                 manual.action();

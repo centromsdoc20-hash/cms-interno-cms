@@ -4,38 +4,65 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./hooks/useProtectedRoute";
 import { Sidebar } from "./components/SiderBar";
 import { PdfViewer } from "./components/PdfViewer";
+import { VideoPlayer } from "./components/VideoPlayer";
 import { Alertas } from "./components/Alerts/Alerts";
-import DateTimeLocation from "./components/DataTime";
 import Login from "./pages/Login/Login";
 import CreateAlert from "./pages/CreateAlert/CreateAlert";
 import placeholderImage from "./assets/background.jpg";
 import styles from './styles/styles.module.scss';
 
+interface VideoData {
+  url: string;
+  title: string;
+}
+
 const Layout = () => {
   const [selectedManual, setSelectedManual] = useState<string | null>(null);
-  const showAlertas = !selectedManual;
+  const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
+  
+  const showAlertas = !selectedManual && !selectedVideo;
+
+  const handleSelectManual = (manualUrl: string | null) => {
+    setSelectedManual(manualUrl);
+    setSelectedVideo(null);
+  };
+
+  const handleSelectVideo = (videoUrl: string, title: string) => {
+    setSelectedVideo({ url: videoUrl, title });
+    setSelectedManual(null);
+  };
+
+  const handleClose = () => {
+    setSelectedManual(null);
+    setSelectedVideo(null);
+  };
 
   return (
     <div className={styles.appContainer}>
-      <Sidebar onSelectManual={setSelectedManual} />
+      <Sidebar 
+        onSelectManual={handleSelectManual}
+        onSelectVideo={handleSelectVideo}
+      />
       
       <div className={styles.mainContent}>
-        <div className={styles.datetimeWrapper}>
-          <DateTimeLocation />
-        </div>
-        
         <div className={styles.contentArea}>
-          {selectedManual ? (
+          {selectedManual && (
             <>
               <PdfViewer fileUrl={selectedManual} />
-              <button
-                className={styles.closeButton}
-                onClick={() => setSelectedManual(null)}
-              >
-                Fechar
-              </button>
             </>
-          ) : (
+          )}
+
+          {selectedVideo && (
+            <>
+              <VideoPlayer
+                videoUrl={selectedVideo.url}
+                title={selectedVideo.title}
+                onClose={handleClose}
+              />
+            </>
+          )}
+          
+          {showAlertas && (
             <div className={styles.placeholderContainer}>
               <img
                 src={placeholderImage}
@@ -57,27 +84,25 @@ const App = () => {
     <AuthProvider>
       <Router>
         <Routes>
+          {/* Rota de login - pública */}
           <Route path="/login" element={<Login />} />
           
-          <Route path="/" element={
-              <Layout />
-          } />
+          {/* Rotas principais - todas públicas (sem proteção) */}
+          <Route path="/" element={<Layout />} />
+          <Route path="/rec" element={<Layout />} />
           
-          <Route path="/rec" element={
-              <Layout />
-          } />
-          
-          <Route path="/criar-alerta" element={
-            <ProtectedRoute>
-              <CreateAlert />
-            </ProtectedRoute>
-          } />
+          {/* Única rota protegida - só essa precisa de login */}
+          <Route 
+            path="/criar-alerta" 
+            element={
+              <ProtectedRoute>
+                <CreateAlert />
+              </ProtectedRoute>
+            } 
+          />
            
-          <Route path="*" element={
-          <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          } />
+          {/* Rota curinga - pública também */}
+          <Route path="*" element={<Layout />} />
         </Routes>
       </Router>
     </AuthProvider>

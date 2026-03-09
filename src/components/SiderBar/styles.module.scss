@@ -37,22 +37,47 @@
     width: 80px;
     min-width: 80px;
     align-items: center;
-
-    // CORREÇÃO: Remover as regras que escondem os textos
-    /* REMOVER ESTAS LINhas PROBLEMÁTICAS:
-    .menuItem span,
-    .clock span,
-    .sectionTitle {
-      opacity: 0;
-      width: 0;
-      height: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-    */
   }
 }
+// Adicione no final do seu arquivo styles.module.scss
 
+.videoMenuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.25rem 0;
+}
+
+.videoDuration {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  margin-left: 0.5rem;
+}
+
+.submenuItem {
+  padding: 0.5rem 1rem 0.5rem 3rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  list-style: none;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    padding-left: 3.5rem;
+  }
+  
+  &.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-left: 3px solid #ffd700;
+  }
+}
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
