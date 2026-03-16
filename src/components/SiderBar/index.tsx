@@ -11,14 +11,15 @@ import manualRec2 from '../../assets/Files/REC/4.pdf';
 import manualRec3 from '../../assets/Files/REC/5.pdf';
 import manualRec4 from '../../assets/Files/REC/6.pdf';
 import manualRec5 from '../../assets/Files/4.pdf';
-import manualChamador from '../../assets/Files/REC/Início de Turno.pdf'
+import manualChamador from '../../assets/Files/REC/Início de Turno.pdf';
 
-import preparos1 from '../../assets/Files/preparos/ECOS PREPAROS.pdf'
-import preparos2 from '../../assets/Files/preparos/PREPARO EEG.pdf'
-import preparos3 from '../../assets/Files/preparos/especialidades.pdf'
+import preparos1 from '../../assets/Files/preparos/ECOS PREPAROS.pdf';
+import preparos2 from '../../assets/Files/preparos/PREPARO EEG.pdf';
+import preparos3 from '../../assets/Files/preparos/especialidades.pdf';
 
 
-import videoteste from '../../assets/videos/2025-11-06 13-32-14.mkv'
+import assistencial from '../../assets/videos/4up.mp4';
+import trabalho from '../../assets/videos/agile.mp4'
 
 
 import {
@@ -388,12 +389,17 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
     toggle: () => setOpenVideosTutoriais((prev) => !prev),
     children: [
       {
-        label: 'Video de teste',
-        url: videoteste,
-        action: () => handleVideoClick(videoteste, 'Video de teste'),
+        label: 'Medicina Assistencial 4UP - Vídeo Tutorial',
+        url: assistencial,
+        action: () => handleVideoClick(assistencial, 'Medicina Assistencial 4UP - Vídeo Tutorial'),
         duration: 'n/a'
       },
-     
+      {
+        label: 'Medicina do Trabalho - Agile - Vídeo Tutorial',
+        url: trabalho,
+        action: () => handleVideoClick(trabalho, 'Medicina do Trabalho - Agile - Vídeo Tutorial'),
+        duration: 'n/a'
+      },
     ],
   };
 
