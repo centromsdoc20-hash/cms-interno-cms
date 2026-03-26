@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import styles from './styles.module.scss';
 import logo from '../../assets/logo-CMS-site.png';
@@ -36,7 +36,8 @@ import {
   MdExpandLess,
   MdHome,
   MdHealthAndSafety,
-  MdVideoLibrary 
+  MdVideoLibrary,
+  MdSearch 
 } from 'react-icons/md';
 import { FaFileMedicalAlt } from "react-icons/fa";
 
@@ -50,6 +51,7 @@ interface MenuItemBase {
   icon: React.ReactElement;
   action?: () => void;
   extern?: boolean;
+  tags?: string[];
 }
 
 interface MenuItemSimple extends MenuItemBase {
@@ -66,6 +68,7 @@ interface MenuItemExpandable extends MenuItemBase {
   children: {
     label: string;
     action: () => void;
+    tags?: string[];
   }[];
 }
 
@@ -75,6 +78,7 @@ interface ManualChild {
   label: string;
   file?: string;
   action?: () => void;
+  tags?: string[];
 }
 
 interface VideoChild {
@@ -82,6 +86,7 @@ interface VideoChild {
   url: string;
   action: () => void;
   duration?: string;
+  tags?: string[];
 }
 
 interface ManualGroup {
@@ -91,6 +96,7 @@ interface ManualGroup {
   expanded: boolean;
   toggle: () => void;
   children: ManualChild[];
+  tag?: string[];
 }
 
 interface VideoGroup {
@@ -99,7 +105,8 @@ interface VideoGroup {
   expandable: boolean;
   expanded: boolean;
   toggle: () => void;
-  children: VideoChild[];
+  children: VideoChild[];    
+  tag?: string[];
 }
 
 export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
@@ -112,7 +119,8 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
   const [openManuaisGeral, setOpenManuaisGeral] = useState(false);
   const [openManuaisMedicos, setOpenManuaisMedicos] = useState(false);
   const [openPreparos, setOpenPreparos] = useState(false);
-  const [openVideosTutoriais, setOpenVideosTutoriais] = useState(false); // Novo state para vídeos
+  const [openVideosTutoriais, setOpenVideosTutoriais] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(''); 
 
   const handleItemClick = (file: string | null, label: string) => {
     setActiveItem(label);
@@ -152,32 +160,37 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       label: 'Medicina Assistencial',
       icon: getIconWithColor(<MdLocalHospital />, 'primary'),
       action: () => handleNavigation('https://cms.4up.io/', true, 'Medicina Assistencial'),
-      extern: true
+      extern: true,
+      tags: ['assistencial', '4up', 'cms', 'medicina']
     },
     {
       label: 'Medicina do Trabalho',
       icon: getIconWithColor(<MdWork />, 'secondary'),
       action: () => handleNavigation('https://centroms.agilework.com.br/Agile.MainApp/', true, 'Medicina do Trabalho'),
-      extern: true
+      extern: true,
+      tags: ['trabalho', 'agile', 'pcms', 'medicina']
     },
     {
       label: 'Exames de Imagem - Animati',
       icon: getIconWithColor(<FaFileMedicalAlt />, 'accent'),
       action: () => handleNavigation('https://pacs.centroms.com.br', true, 'Raio X CMS'),
-      extern: true
+      extern: true,
+      tags: ['exames', 'imagem', 'animati', 'pacs', 'raio x']
     },
    
     {
       label: 'WhatsApp',
       icon: getIconWithColor(<MdWhatsapp />, 'tertiary'),
       action: () => handleNavigation('https://centroms.sz.chat/static/signin?action=session_expired', true, 'WhatsApp'),
-      extern: true
+      extern: true,
+      tags: ['whatsapp', 'chat', 'atendimento']
     },
     {
       label: 'Drive',
       icon: getIconWithColor(<MdFileDownload />, 'neutral'),
       action: () => handleNavigation('https://drive.google.com/', true, 'Drive'),
-      extern: true
+      extern: true,
+      tags: ['drive', 'arquivos', 'documentos']
     }
   ];
 
@@ -186,25 +199,29 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       label: 'Medicina Assistencial',
       icon: getIconWithColor(<MdLocalHospital />, 'primary'),
       action: () => handleNavigation('https://cms.4up.io/', true, 'Medicina Assistencial'),
-      extern: true
+      extern: true,
+      tags: ['assistencial', '4up', 'cms', 'medicina']
     },
     {
       label: 'Medicina do Trabalho',
       icon: getIconWithColor(<MdWork />, 'secondary'),
       action: () => handleNavigation('https://centroms.agilework.com.br/Agile.MainApp/', true, 'Medicina do Trabalho'),
-      extern: true
+      extern: true,
+      tags: ['trabalho', 'agile', 'pcms', 'medicina']
     },
     {
       label: 'Exames de Imagem - Animati',
       icon: getIconWithColor(<FaFileMedicalAlt />, 'accent'),
       action: () => handleNavigation('https://pacs.centroms.com.br', true, 'Raio X CMS'),
-      extern: true
+      extern: true,
+      tags: ['exames', 'imagem', 'animati', 'pacs', 'raio x']
     },
     {
       label: 'WhatsApp',
       icon: getIconWithColor(<MdWhatsapp />, 'tertiary'),
       action: () => handleNavigation('https://centroms.sz.chat/static/signin?action=session_expired', true, 'WhatsApp'),
-      extern: true
+      extern: true,
+      tags: ['whatsapp', 'chat', 'atendimento']
     },
     {
       label: 'Operadoras',
@@ -212,22 +229,27 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       expandable: true,
       expanded: openOperadoras,
       toggle: () => setOpenOperadoras((prev) => !prev),
+      tags: ['operadoras', 'planos', 'convênios'],
       children: [
         {
           label: 'Doctor Clin',
           action: () => handleNavigation('https://app2.goclin.com/', true, 'Doctor Clin'),
+          tags: ['doctorclin', 'operadora', 'plano']
         },
         {
           label: 'CCG',
           action: () => handleNavigation('https://saviatendimento.com.br/saviatendimento/login.faces', true, 'CCG'),
+          tags: ['ccg', 'operadora', 'savia']
         },
         {
           label: 'CASSI',
           action: () => handleNavigation('https://polimed.com.br/autenticadorOrizon/loginAutenticador', true, 'CASSI'),
+          tags: ['cassi', 'operadora', 'polimed']
         },
         {
           label: 'Cabergs',
           action: () => handleNavigation('https://portal.cabergs.org.br/autenticacao/', true, 'Cabergs'),
+          tags: ['cabergs', 'operadora']
         },
       ],
     },
@@ -237,22 +259,22 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       expandable: true,
       expanded: openLaudos,
       toggle: () => setOpenLaudos((prev) => !prev),
+      tags: ['laudos', 'resultados', 'exames'],
       children: [
         {
           label: 'Laboratório Pagel',
           action: () => handleNavigation('https://201.56.72.83:9997/#/login-geral', true, 'Laboratório Pagel'),
+          tags: ['pagel', 'laboratório', 'laudos']
         },
         {
           label: 'Eletrocardiograma - Micromed',
           action: () => handleNavigation('https://coreum.health/classic/autenticacao/codigo-acesso', true, 'Eletrocardiograma - Micromed'),
+          tags: ['eletro', 'ecg', 'micromed', 'coreum']
         },
         {
           label: 'Laudo Pronto',
           action: () => handleNavigation('https://laudopronto.com.br/', true, 'Laudo Pronto'),
-        },
-        {
-          label: 'Raio X',
-          action: () => handleNavigation('https://icrx.onrad.com.br/', true, 'Raio X'),
+          tags: ['laudopronto', 'laudos']
         },
       ],
     },
@@ -262,18 +284,22 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       expandable: true,
       expanded: openPreparos,
       toggle: () => setOpenPreparos((prev) => !prev),
+      tags: ['preparos', 'pacientes', 'exames'],
       children: [
         {
           label: 'ECOS PREPAROS',
           action: () => handleItemClick(preparos1, 'ECOS PREPAROS'),
+          tags: ['ecos', 'preparo', 'ecocardiograma']
         },
         {
           label: 'PREPARO EEG',
           action: () => handleItemClick(preparos2, 'PREPARO EEG'),
+          tags: ['eeg', 'preparo', 'eletroencefalograma']
         },
         {
           label: 'Especialidades',
           action: () => handleItemClick(preparos3, 'Especialidades'),
+          tags: ['especialidades', 'preparos', 'consultas']
         },
       ],
     },
@@ -284,7 +310,8 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       label: 'Raio X Hospital',
       icon: getIconWithColor(<MdHealthAndSafety />, 'tertiary'),
       action: () => handleNavigation('https://www.optixone.com.br/dist/home.html', true, 'Raio X Hospital'),
-      extern: true
+      extern: true,
+      tags: ['raio x', 'optixone', 'hospital', 'imagem']
     },
     {
       label: 'Operadoras',
@@ -292,22 +319,27 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       expandable: true,
       expanded: openOperadoras,
       toggle: () => setOpenOperadoras((prev) => !prev),
+      tags: ['operadoras', 'planos', 'convênios'],
       children: [
         {
           label: 'Doctor Clin',
           action: () => handleNavigation('https://app2.goclin.com/', true, 'Doctor Clin'),
+          tags: ['doctorclin', 'operadora', 'plano']
         },
         {
           label: 'CCG',
           action: () => handleNavigation('https://saviatendimento.com.br/saviatendimento/login.faces', true, 'CCG'),
+          tags: ['ccg', 'operadora', 'savia']
         },
         {
           label: 'CASSI',
           action: () => handleNavigation('https://polimed.com.br/autenticadorOrizon/loginAutenticador', true, 'CASSI'),
+          tags: ['cassi', 'operadora', 'polimed']
         },
         {
           label: 'Cabergs',
           action: () => handleNavigation('https://portal.cabergs.org.br/autenticacao/', true, 'Cabergs'),
+          tags: ['cabergs', 'operadora']
         },
       ],
     },
@@ -317,22 +349,27 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       expandable: true,
       expanded: openLaudos,
       toggle: () => setOpenLaudos((prev) => !prev),
+      tags: ['laudos', 'resultados', 'exames'],
       children: [
         {
           label: 'Laboratório Pagel',
           action: () => handleNavigation('https://201.56.72.83:9997/#/login-geral', true, 'Laboratório Pagel'),
+          tags: ['pagel', 'laboratório', 'laudos']
         },
         {
           label: 'Eletrocardiograma - Micromed',
           action: () => handleNavigation('https://coreum.health/classic/autenticacao/codigo-acesso', true, 'Eletrocardiograma - Micromed'),
+          tags: ['eletro', 'ecg', 'micromed', 'coreum']
         },
         {
           label: 'Laudo Pronto',
           action: () => handleNavigation('https://laudopronto.com.br/', true, 'Laudo Pronto'),
+          tags: ['laudopronto', 'laudos']
         },
         {
           label: 'Raio X',
           action: () => handleNavigation('https://icrx.onrad.com.br/', true, 'Raio X'),
+          tags: ['raio x', 'icrx', 'imagem']
         },
       ],
     },
@@ -344,18 +381,22 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
     expandable: true,
     expanded: openManuaisGeral,
     toggle: () => setOpenManuaisGeral((prev) => !prev),
+    tag: ['manuais', 'gerais', 'documentação'],
     children: [
       { 
         label: 'Medicina Assistêncial', 
         file: manualRec,
+        tags: ['assistencial', 'manual', '4up']
       },
       { 
-       label: 'Emissão de Notas | Mais de um pagamento', 
-       file: manualRec5,
-     },
+        label: 'Emissão de Notas | Mais de um pagamento', 
+        file: manualRec5,
+        tags: ['notas', 'pagamento', 'financeiro']
+      },
       { 
         label: 'Raio X', 
         file: manualRec1,
+        tags: ['raio x', 'manual', 'imagem']
       },
     ],
   };
@@ -366,18 +407,22 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
     expandable: true,
     expanded: openManuaisMedicos,
     toggle: () => setOpenManuaisMedicos((prev) => !prev),
+    tag: ['manuais', 'médicos', 'documentação'],
     children: [
       { 
         label: 'Manual Assistêncial', 
         file: manualRec2,
+        tags: ['assistencial', 'manual', 'médico']
       },
       { 
         label: 'Medicina do Trabalho', 
         file: manualRec3,
+        tags: ['trabalho', 'manual', 'pcms']
       },
       { 
         label: 'Raio X', 
         file: manualRec4,
+        tags: ['raio x', 'manual', 'imagem']
       },
     ],
   };
@@ -388,24 +433,28 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
     expandable: true,
     expanded: openVideosTutoriais,
     toggle: () => setOpenVideosTutoriais((prev) => !prev),
+    tag: ['vídeos', 'tutoriais', 'treinamentos'],
     children: [
       {
         label: 'Medicina Assistencial 4UP - Vídeo Tutorial',
         url: assistencial,
         action: () => handleVideoClick(assistencial, 'Medicina Assistencial 4UP - Vídeo Tutorial'),
-        duration: 'n/a'
+        duration: 'n/a',
+        tags: ['vídeo', 'tutorial', 'assistencial', '4up']
       },
       {
         label: 'Medicina do Trabalho - Agile - Vídeo Tutorial',
         url: trabalho,
         action: () => handleVideoClick(trabalho, 'Medicina do Trabalho - Agile - Vídeo Tutorial'),
-        duration: 'n/a'
+        duration: 'n/a',
+        tags: ['vídeo', 'tutorial', 'trabalho', 'agile']
       },
       {
         label: 'Erro Assinatura 4UP - Vídeo Tutorial',
         url: erroAssinatura4up,
         action: () => handleVideoClick(erroAssinatura4up, 'Erro Assinatura 4UP - Vídeo Tutorial'),
-        duration: 'n/a'
+        duration: 'n/a',
+        tags: ['vídeo', 'tutorial', 'erro', 'assinatura', '4up']
       }
     ],
   };
@@ -413,22 +462,27 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
   const manualsDefault = {
     label: 'Manuais',
     icon: getIconWithColor(<MdMenuBook />, 'primary'),
+    tag: ['manuais', 'documentação'],
     children: [
       {
         label: 'Totem e Chamador de Senhas',
         file: manualChamador,
+        tags: ['totem', 'chamador', 'senhas', 'manual']
       },
       { 
         label: 'Manual de Atendimento', 
         file: manualAtendimento,
+        tags: ['atendimento', 'manual', 'recepção']
       },
       { 
         label: 'Atendimento PCMSO', 
         file: manualParaAtendimentoPCMSO,
+        tags: ['pcms', 'atendimento', 'manual']
       },
       { 
         label: 'Emissão de Notas | Mais de um pagamento', 
         file: manualRec5,
+        tags: ['notas', 'pagamento', 'financeiro']
       },
     ],
   };
@@ -437,13 +491,90 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
     label: 'Início',
     icon: getIconWithColor(<MdHome />, 'primary'),
     action: () => handleNavigation('/', false, 'Início'),
+    tags: ['início', 'home']
   };
 
   const recItem: MenuItemSimple = {
     label: 'Recepção',
     icon: getIconWithColor(<MdHealthAndSafety />, 'tertiary'),
     action: () => handleNavigation('/rec', false, 'REC'),
+    tags: ['recepção', 'rec']
   };
+
+  // Função para verificar se um item corresponde à busca
+  const matchesSearch = (text: string, tags?: string[]): boolean => {
+    if (!searchTerm) return true;
+    const searchLower = searchTerm.toLowerCase();
+    const textMatch = text.toLowerCase().includes(searchLower);
+    const tagsMatch = tags?.some(tag => tag.toLowerCase().includes(searchLower)) || false;
+    return textMatch || tagsMatch;
+  };
+
+  // Função para filtrar grupos de manuais
+  const filterManualGroup = (group: ManualGroup): ManualGroup | null => {
+    const filteredChildren = group.children.filter(child => 
+      matchesSearch(child.label, child.tags)
+    );
+    
+    if (filteredChildren.length === 0) return null;
+    
+    return {
+      ...group,
+      children: filteredChildren
+    };
+  };
+
+  // Função para filtrar grupos de vídeos
+  const filterVideoGroup = (group: VideoGroup): VideoGroup | null => {
+    const filteredChildren = group.children.filter(child => 
+      matchesSearch(child.label, child.tags)
+    );
+    
+    if (filteredChildren.length === 0) return null;
+    
+    return {
+      ...group,
+      children: filteredChildren
+    };
+  };
+
+  // Função para filtrar itens de menu
+  const filterMenuItem = (item: MenuItem): MenuItem | null => {
+    const itemMatches = matchesSearch(item.label, item.tags);
+    
+    if (item.expandable) {
+      const filteredChildren = item.children.filter(child => 
+        matchesSearch(child.label, child.tags)
+      );
+      
+      if (filteredChildren.length === 0 && !itemMatches) return null;
+      
+      return {
+        ...item,
+        children: filteredChildren,
+        expanded: filteredChildren.length > 0 && searchTerm !== '' ? true : item.expanded
+      };
+    }
+    
+    return itemMatches ? item : null;
+  };
+
+  // Filtrar itens
+  const filteredQuickAccessItems = (isRecRoute ? quickAccessItemsRec : quickAccessItemsHome)
+    .map(filterMenuItem)
+    .filter((item): item is MenuItem => item !== null);
+
+  const filteredExternalAccessItems = externalAccessItems
+    .map(filterMenuItem)
+    .filter((item): item is MenuItem => item !== null);
+
+  const filteredManualsRecGeral = searchTerm ? filterManualGroup(manualsRecGeral) : manualsRecGeral;
+  const filteredManualsRecMedicos = searchTerm ? filterManualGroup(manualsRecMedicos) : manualsRecMedicos;
+  const filteredVideosTutoriais = searchTerm ? filterVideoGroup(videosTutoriais) : videosTutoriais;
+  const filteredManualsDefault = searchTerm ? {
+    ...manualsDefault,
+    children: manualsDefault.children.filter(child => matchesSearch(child.label, child.tags))
+  } : manualsDefault;
 
   return (
     <div className={`${styles.sidebar} ${isExpanded ? styles.expanded : styles.collapsed}`}>
@@ -454,6 +585,30 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       </div>
 
       <div className={styles.scrollContainer}>
+        {/* Campo de Busca */}
+        <div className={styles.section}>
+          {isExpanded && (
+            <div className={styles.searchContainer}>
+              <MdSearch className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder="Buscar por nome ou tag..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.searchInput}
+              />
+              {searchTerm && (
+                <button 
+                  className={styles.clearSearch}
+                  onClick={() => setSearchTerm('')}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className={styles.section}>
           {isExpanded && <p className={styles.sectionTitle}>Navegação</p>}
           <ul className={styles.menu}>
@@ -481,7 +636,7 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
         <div className={styles.section}>
           {isExpanded && <p className={styles.sectionTitle}>Interno Centro Médico Sapiranga</p>}
           <ul className={styles.menu}>
-            {(isRecRoute ? quickAccessItemsRec : quickAccessItemsHome).map((item, index) => (
+            {filteredQuickAccessItems.map((item, index) => (
               <li 
                 key={item.label} 
                 className={`${styles.menuItem} ${activeItem === item.label ? styles.active : ''}`}
@@ -500,7 +655,7 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
                     </>
                   )}
                 </div>
-                {item.expandable && item.expanded && (
+                {item.expandable && item.expanded && item.children.length > 0 && (
                   <ul className={styles.submenu}>
                     {item.children.map((child, childIndex) => (
                       <li
@@ -519,110 +674,112 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
           </ul>
         </div>
 
-        {/* Seção de Acessos Externos - Aparece em ambas as páginas */}
-        <div className={styles.section}>
-          {isExpanded && <p className={styles.sectionTitle}>Acessos Externos</p>}
-          <ul className={styles.menu}>
-            {externalAccessItems.map((item, index) => (
-              <li 
-                key={item.label} 
-                className={`${styles.menuItem} ${activeItem === item.label ? styles.active : ''}`}
-                style={{ animationDelay: `${index * 0.05}s` }}
-              >
-                <div
-                  className={styles.menuItemContent}
-                  onClick={item.expandable ? item.toggle : () => item.action && item.action()}
+        {/* Seção de Acessos Externos */}
+        {filteredExternalAccessItems.length > 0 && (
+          <div className={styles.section}>
+            {isExpanded && <p className={styles.sectionTitle}>Acessos Externos</p>}
+            <ul className={styles.menu}>
+              {filteredExternalAccessItems.map((item, index) => (
+                <li 
+                  key={item.label} 
+                  className={`${styles.menuItem} ${activeItem === item.label ? styles.active : ''}`}
+                  style={{ animationDelay: `${index * 0.05}s` }}
                 >
-                  {item.icon}
+                  <div
+                    className={styles.menuItemContent}
+                    onClick={item.expandable ? item.toggle : () => item.action && item.action()}
+                  >
+                    {item.icon}
+                    {isExpanded && (
+                      <>
+                        <span>{item.label}</span>
+                        {item.extern && <MdOpenInNew className={styles.externalIcon} />}
+                        {item.expandable && (item.expanded ? <MdExpandLess /> : <MdExpandMore />)}
+                      </>
+                    )}
+                  </div>
+                  {item.expandable && item.expanded && item.children.length > 0 && (
+                    <ul className={styles.submenu}>
+                      {item.children.map((child, childIndex) => (
+                        <li
+                          key={child.label}
+                          className={styles.submenuItem}
+                          onClick={() => child.action()}
+                          style={{ animationDelay: `${childIndex * 0.03}s` }}
+                        >
+                          {isExpanded && <span>{child.label}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {filteredVideosTutoriais && filteredVideosTutoriais.children.length > 0 && (
+          <div className={styles.section}>
+            {isExpanded && <p className={styles.sectionTitle}>Treinamentos</p>}
+            <ul className={styles.menu}>
+              <li className={styles.menuItem}>
+                <div className={styles.menuItemContent} onClick={videosTutoriais.toggle}>
+                  {videosTutoriais.icon}
                   {isExpanded && (
                     <>
-                      <span>{item.label}</span>
-                      {item.extern && <MdOpenInNew className={styles.externalIcon} />}
-                      {item.expandable && (item.expanded ? <MdExpandLess /> : <MdExpandMore />)}
+                      <span>{videosTutoriais.label}</span>
+                      {videosTutoriais.expanded ? <MdExpandLess /> : <MdExpandMore />}
                     </>
                   )}
                 </div>
-                {item.expandable && item.expanded && (
+                {videosTutoriais.expanded && (
                   <ul className={styles.submenu}>
-                    {item.children.map((child, childIndex) => (
+                    {filteredVideosTutoriais.children.map((video, videoIndex) => (
                       <li
-                        key={child.label}
-                        className={styles.submenuItem}
-                        onClick={() => child.action()}
-                        style={{ animationDelay: `${childIndex * 0.03}s` }}
+                        key={video.label}
+                        className={`${styles.submenuItem} ${activeItem === video.label ? styles.active : ''}`}
+                        onClick={() => video.action()}
+                        style={{ animationDelay: `${videoIndex * 0.03}s` }}
                       >
-                        {isExpanded && <span>{child.label}</span>}
+                        {isExpanded && (
+                          <div className={styles.videoMenuItem}>
+                            <span>▶️ {video.label}</span>
+                            {video.duration && (
+                              <span className={styles.videoDuration}>{video.duration}</span>
+                            )}
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>
                 )}
               </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* NOVA SEÇÃO: Vídeos Tutoriais */}
-        <div className={styles.section}>
-          {isExpanded && <p className={styles.sectionTitle}>Treinamentos</p>}
-          <ul className={styles.menu}>
-            <li className={styles.menuItem}>
-              <div className={styles.menuItemContent} onClick={videosTutoriais.toggle}>
-                {videosTutoriais.icon}
-                {isExpanded && (
-                  <>
-                    <span>{videosTutoriais.label}</span>
-                    {videosTutoriais.expanded ? <MdExpandLess /> : <MdExpandMore />}
-                  </>
-                )}
-              </div>
-              {videosTutoriais.expanded && (
-                <ul className={styles.submenu}>
-                  {videosTutoriais.children.map((video, videoIndex) => (
-                    <li
-                      key={video.label}
-                      className={`${styles.submenuItem} ${activeItem === video.label ? styles.active : ''}`}
-                      onClick={() => video.action()}
-                      style={{ animationDelay: `${videoIndex * 0.03}s` }}
-                    >
-                      {isExpanded && (
-                        <div className={styles.videoMenuItem}>
-                          <span>▶️ {video.label}</span>
-                          {video.duration && (
-                            <span className={styles.videoDuration}>{video.duration}</span>
-                          )}
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          </ul>
-        </div>
+            </ul>
+          </div>
+        )}
 
         <div className={styles.section}>
           {isExpanded && <p className={styles.sectionTitle}>Documentação</p>}
           <ul className={styles.menu}>
             {isRecRoute ? (
               <>
-                {[manualsRecGeral, manualsRecMedicos].map((manualGroup, groupIndex) => (
+                {filteredManualsRecGeral && filteredManualsRecGeral.children.length > 0 && (
                   <li 
-                    key={manualGroup.label} 
+                    key={filteredManualsRecGeral.label} 
                     className={styles.menuItem}
-                    style={{ animationDelay: `${groupIndex * 0.05}s` }}
                   >
-                    <div className={styles.menuItemContent} onClick={manualGroup.toggle}>
-                      {manualGroup.icon}
+                    <div className={styles.menuItemContent} onClick={filteredManualsRecGeral.toggle}>
+                      {filteredManualsRecGeral.icon}
                       {isExpanded && (
                         <>
-                          <span>{manualGroup.label}</span>
-                          {manualGroup.expanded ? <MdExpandLess /> : <MdExpandMore />}
+                          <span>{filteredManualsRecGeral.label}</span>
+                          {filteredManualsRecGeral.expanded ? <MdExpandLess /> : <MdExpandMore />}
                         </>
                       )}
                     </div>
-                    {manualGroup.expanded && (
+                    {filteredManualsRecGeral.expanded && (
                       <ul className={styles.submenu}>
-                        {manualGroup.children.map((manual, manualIndex) => (
+                        {filteredManualsRecGeral.children.map((manual, manualIndex) => (
                           <li
                             key={manual.label}
                             className={`${styles.submenuItem} ${activeItem === manual.label ? styles.active : ''}`}
@@ -641,10 +798,46 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
                       </ul>
                     )}
                   </li>
-                ))}
+                )}
+                {filteredManualsRecMedicos && filteredManualsRecMedicos.children.length > 0 && (
+                  <li 
+                    key={filteredManualsRecMedicos.label} 
+                    className={styles.menuItem}
+                  >
+                    <div className={styles.menuItemContent} onClick={filteredManualsRecMedicos.toggle}>
+                      {filteredManualsRecMedicos.icon}
+                      {isExpanded && (
+                        <>
+                          <span>{filteredManualsRecMedicos.label}</span>
+                          {filteredManualsRecMedicos.expanded ? <MdExpandLess /> : <MdExpandMore />}
+                        </>
+                      )}
+                    </div>
+                    {filteredManualsRecMedicos.expanded && (
+                      <ul className={styles.submenu}>
+                        {filteredManualsRecMedicos.children.map((manual, manualIndex) => (
+                          <li
+                            key={manual.label}
+                            className={`${styles.submenuItem} ${activeItem === manual.label ? styles.active : ''}`}
+                            onClick={() => {
+                              if (manual.action) {
+                                manual.action();
+                              } else if (manual.file) {
+                                handleItemClick(manual.file, manual.label);
+                              }
+                            }}
+                            style={{ animationDelay: `${manualIndex * 0.03}s` }}
+                          >
+                            {isExpanded && <span>{manual.label}</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                )}
               </>
             ) : (
-              manualsDefault.children.map((manual, index) => (
+              filteredManualsDefault.children.map((manual, index) => (
                 <li
                   key={manual.label}
                   className={`${styles.menuItem} ${activeItem === manual.label ? styles.active : ''}`}
