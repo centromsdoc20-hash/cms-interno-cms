@@ -20,6 +20,7 @@ import preparos3 from '../../assets/Files/preparos/especialidades.pdf';
 
 import assistencial from '../../assets/videos/4up.mp4';
 import trabalho from '../../assets/videos/agile.mp4'
+import erroAssinatura4up from '../../assets/videos/202603250854 (1).mp4'
 
 
 import {
@@ -400,6 +401,12 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
         action: () => handleVideoClick(trabalho, 'Medicina do Trabalho - Agile - Vídeo Tutorial'),
         duration: 'n/a'
       },
+      {
+        label: 'Erro Assinatura 4UP - Vídeo Tutorial',
+        url: erroAssinatura4up,
+        action: () => handleVideoClick(erroAssinatura4up, 'Erro Assinatura 4UP - Vídeo Tutorial'),
+        duration: 'n/a'
+      }
     ],
   };
 
