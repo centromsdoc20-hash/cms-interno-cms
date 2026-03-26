@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styles from './styles.module.scss';
 import logo from '../../assets/logo-CMS-site.png';
