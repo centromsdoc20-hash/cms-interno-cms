@@ -186,6 +186,13 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       tags: ['whatsapp', 'chat', 'atendimento']
     },
     {
+      label: "Buscar CEP",
+      icon: getIconWithColor(<MdSearch />, 'neutral'),
+      action: () => handleNavigation('https://buscacepinter.correios.com.br/app/endereco/index.php', true, 'Buscar CEP'),
+      extern: true,
+      tags: ['cep', 'correios', 'endereço']
+    },
+    {
       label: 'Drive',
       icon: getIconWithColor(<MdFileDownload />, 'neutral'),
       action: () => handleNavigation('https://drive.google.com/', true, 'Drive'),
