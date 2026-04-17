@@ -230,14 +230,13 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       extern: true,
       tags: ['whatsapp', 'chat', 'atendimento']
     },
-       {
-      label: 'Exames de Imagem - Animati',
-      icon: getIconWithColor(<FaFileMedicalAlt />, 'accent'),
-      action: () => handleNavigation('https://pacs.centroms.com.br', true, 'Raio X CMS'),
+    {
+      label: "Buscar CEP",
+      icon: getIconWithColor(<MdSearch />, 'neutral'),
+      action: () => handleNavigation('https://buscacepinter.correios.com.br/app/endereco/index.php', true, 'Buscar CEP'),
       extern: true,
-      tags: ['exames', 'imagem', 'animati', 'pacs', 'raio x']
+      tags: ['cep', 'correios', 'endereço']
     },
-   
     {
       label: 'Operadoras',
       icon: getIconWithColor(<MdBusiness />, 'neutral'),
