@@ -230,6 +230,14 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       extern: true,
       tags: ['whatsapp', 'chat', 'atendimento']
     },
+       {
+      label: 'Exames de Imagem - Animati',
+      icon: getIconWithColor(<FaFileMedicalAlt />, 'accent'),
+      action: () => handleNavigation('https://pacs.centroms.com.br', true, 'Raio X CMS'),
+      extern: true,
+      tags: ['exames', 'imagem', 'animati', 'pacs', 'raio x']
+    },
+   
     {
       label: 'Operadoras',
       icon: getIconWithColor(<MdBusiness />, 'neutral'),
