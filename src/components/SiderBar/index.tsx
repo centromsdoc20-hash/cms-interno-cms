@@ -194,6 +194,13 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       isExternal: true,
       tags: ['trabalho', 'agile', 'pcms', 'ocupacional']
     },
+        {
+      label: 'NOVO - Medicina do Trabalho',
+      icon: <MdWork />,
+      action: () => handleNavigation('https://app.sgg.net.br/', true, 'Medicina do Trabalho'),
+      isExternal: true,
+      tags: ['trabalho', 'agile', 'pcms', 'ocupacional']
+    },
     {
       label: 'Exames de Imagem',
       icon: <FaFileMedicalAlt />,
