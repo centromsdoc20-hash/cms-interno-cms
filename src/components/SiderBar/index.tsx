@@ -201,6 +201,7 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       isExternal: true,
       tags: ['trabalho', 'agile', 'pcms', 'ocupacional']
     },
+     
     {
       label: 'Exames de Imagem',
       icon: <FaFileMedicalAlt />,
@@ -214,6 +215,13 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       action: () => handleNavigation('https://centroms.sz.chat/static/signin?action=session_expired', true, 'WhatsApp'),
       isExternal: true,
       tags: ['whatsapp', 'chat', 'atendimento', 'mensagens']
+    },
+    {
+      label: 'Medicina Assistencial – Acesso Emergencial',
+      icon: <MdLocalHospital />,
+      action: () => handleNavigation('https://192.168.100.11/', true, 'Medicina Assistencial Emergencia'),
+      isExternal: true,
+      tags: ['assistencial', '4up', 'cms', 'medicina', 'prontuário']
     },
     {
       label: 'Buscar CEP',
