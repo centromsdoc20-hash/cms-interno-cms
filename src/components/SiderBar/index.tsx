@@ -217,7 +217,7 @@ export const Sidebar = ({ onSelectManual, onSelectVideo }: SidebarProps) => {
       tags: ['whatsapp', 'chat', 'atendimento', 'mensagens']
     },
     {
-      label: 'Medicina Assistencial – Acesso Emergencial',
+      label: 'Medicina Assistencial 4UP – Acesso Emergencial',
       icon: <MdLocalHospital />,
       action: () => handleNavigation('https://192.168.100.11/', true, 'Medicina Assistencial Emergencia'),
       isExternal: true,
